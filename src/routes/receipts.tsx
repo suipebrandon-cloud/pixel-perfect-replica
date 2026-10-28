@@ -114,7 +114,7 @@ function ReceiptDialog({ replacing, onClose, onDone }: { replacing: Row | null; 
     reference: replacing?.reference ?? "",
     notes: replacing ? `Replaces ${replacing.receipt_no}` : "",
   }));
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [step, setStep] = useState<"edit" | "confirm">("edit");
   const [busy, setBusy] = useState(false);
   const clientProjects = useMemo(() => projects.filter((p) => p.client_id === v.client_id && p.is_active), [projects, v.client_id]);
@@ -124,7 +124,7 @@ function ReceiptDialog({ replacing, onClose, onDone }: { replacing: Row | null; 
   const review = () => {
     const p = receiptSchema.safeParse(payload);
     if (!p.success) {
-      const e: Record<string, string> = {};
+      const e: any = {};
       p.error.issues.forEach((i) => (e[String(i.path[0])] = i.message));
       setErrors(e);
       return;
