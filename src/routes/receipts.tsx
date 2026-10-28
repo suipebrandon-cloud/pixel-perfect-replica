@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/receipts")({
 type Row = Awaited<ReturnType<typeof listReceipts>>[number];
 
 const newKey = () => crypto.randomUUID();
+type FormState = { client_id: string; project_id: string; receipt_date: string; amount: string; account_id: string; payment_method: string; reference: string; notes: string };
 
 function ReceiptsPage() {
   const qc = useQueryClient();
@@ -102,7 +104,7 @@ function ReceiptDialog({ replacing, onClose, onDone }: { replacing: Row | null; 
   const { data: accounts = [] } = useQuery(recordsQuery("accounts"));
   const post = useServerFn(postReceipt);
   const [key] = useState(newKey); // one key per form → re-submits cannot double post
-  const [v, setV] = useState<Record<string, string>>(() => ({
+  const [v, setV] = useState<FormState>(() => ({
     client_id: replacing?.client_id ?? "",
     project_id: replacing?.project_id ?? "",
     receipt_date: replacing?.receipt_date ?? new Date().toISOString().slice(0, 10),
@@ -116,7 +118,7 @@ function ReceiptDialog({ replacing, onClose, onDone }: { replacing: Row | null; 
   const [step, setStep] = useState<"edit" | "confirm">("edit");
   const [busy, setBusy] = useState(false);
   const clientProjects = useMemo(() => projects.filter((p) => p.client_id === v.client_id && p.is_active), [projects, v.client_id]);
-  const set = (k: string, val: string) => setV((s) => ({ ...s, [k]: val, ...(k === "client_id" ? { project_id: "" } : {}) }));
+  const set = (k: keyof FormState, val: string) => setV((s) => ({ ...s, [k]: val, ...(k === "client_id" ? { project_id: "" } : {}) }));
   const payload = { ...v, idempotency_key: key, replaces_receipt_id: replacing?.id ?? null };
 
   const review = () => {
@@ -133,16 +135,16 @@ function ReceiptDialog({ replacing, onClose, onDone }: { replacing: Row | null; 
   const confirm = async () => {
     setBusy(true);
     try {
-      await post({ data: payload });
+      await post({ data: payload as never });
       toast.success("Receipt posted");
       onDone();
       onClose();
     } catch (e) { toast.error((e as Error).message); setStep("edit"); }
     setBusy(false);
   };
-  const name = (list: Record<string, unknown>[], id: string) => String(list.find((x) => x.id === id)?.name ?? "—");
+  const name = (list: any[], id: string) => String(list.find((x) => x.id === id)?.name ?? "—");
 
-  const sel = (k: string, label: string, opts: { value: string; label: string }[]) => (
+  const sel = (k: keyof FormState, label: string, opts: { value: string; label: string }[]) => (
     <div className="grid gap-1.5">
       <Label>{label} <span className="text-primary">*</span></Label>
       <Select {...(v[k] ? { value: v[k] } : {})} onValueChange={(val) => set(k, val)}>
