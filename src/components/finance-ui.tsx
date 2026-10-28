@@ -33,7 +33,7 @@ const tones: Record<string, string> = {
 
 export function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={cn("inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide", tones[status] ?? tones.inactive)}>
+    <span className={cn("inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide", tones[status] ?? tones["inactive"])}>
       {status.replace("_", " ")}
     </span>
   );

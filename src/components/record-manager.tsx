@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -22,7 +23,7 @@ export type Field = {
   required?: boolean;
   default?: string;
 };
-export type Column = { label: string; render: (row: Record<string, unknown>) => React.ReactNode; className?: string };
+export type Column = { label: string; render: (row: any) => React.ReactNode; className?: string };
 
 export const recordsQuery = (table: RecordTable) => ({
   queryKey: ["records", table],
@@ -35,18 +36,18 @@ export function RecordManager({ table, singular, fields, columns }: { table: Rec
   const save = useServerFn(saveRecord);
   const toggle = useServerFn(setRecordActive);
   const del = useServerFn(deleteRecord);
-  const [editing, setEditing] = useState<Record<string, unknown> | null>(null);
+  const [editing, setEditing] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [confirmDelete, setConfirmDelete] = useState<Record<string, unknown> | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<any | null>(null);
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["records", table] });
     qc.invalidateQueries({ queryKey: ["dashboard"] });
   };
 
-  const startEdit = (row: Record<string, unknown> | null) => {
+  const startEdit = (row: any | null) => {
     setEditing(row);
     const v: Record<string, string> = {};
     fields.forEach((f) => (v[f.name] = row ? String(row[f.name] ?? "") : f.default ?? ""));
@@ -70,7 +71,7 @@ export function RecordManager({ table, singular, fields, columns }: { table: Rec
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const onToggle = async (row: Record<string, unknown>) => {
+  const onToggle = async (row: any) => {
     try { await toggle({ data: { table, id: row.id as string, active: !row.is_active } }); refresh(); }
     catch (e) { toast.error((e as Error).message); }
   };
@@ -123,7 +124,7 @@ export function RecordManager({ table, singular, fields, columns }: { table: Rec
               <div key={f.name} className="grid gap-1.5">
                 <Label htmlFor={f.name}>{f.label}{f.required && <span className="text-primary"> *</span>}</Label>
                 {f.type === "select" ? (
-                  <Select value={values[f.name] || undefined} onValueChange={(v) => setValues({ ...values, [f.name]: v })}>
+                  <Select {...(values[f.name] ? { value: values[f.name] } : {})} onValueChange={(v) => setValues({ ...values, [f.name]: v })}>
                     <SelectTrigger id={f.name}><SelectValue placeholder="Select…" /></SelectTrigger>
                     <SelectContent>{f.options?.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>

@@ -46,11 +46,12 @@ export const listRecords = createServerFn({ method: "GET" })
     const db = await admin();
     const { data: rows, error } = await db.from(data.table).select("*").order("created_at", { ascending: true });
     fail(error);
-    return (rows ?? []) as Record<string, unknown>[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (rows ?? []) as any[];
   });
 
 export const saveRecord = createServerFn({ method: "POST" })
-  .inputValidator((d: { table: RecordTable; id?: string; values: Record<string, unknown> }) => {
+  .inputValidator((d: { table: RecordTable; id?: string | undefined; values: Record<string, unknown> }) => {
     const table = tableEnum.parse(d.table);
     return { table, id: d.id ? z.string().uuid().parse(d.id) : undefined, values: recordSchemas[table].parse(d.values) };
   })
@@ -127,7 +128,7 @@ export const postReceipt = createServerFn({ method: "POST" })
     const { data: id, error } = await db.rpc("post_receipt", {
       _client_id: data.client_id, _project_id: data.project_id, _date: data.receipt_date, _amount: data.amount,
       _account_id: data.account_id, _method: data.payment_method, _reference: data.reference,
-      _notes: data.notes ?? "", _idempotency_key: data.idempotency_key, _replaces: data.replaces_receipt_id ?? undefined,
+      _notes: data.notes ?? "", _idempotency_key: data.idempotency_key, ...(data.replaces_receipt_id ? { _replaces: data.replaces_receipt_id } : {}),
     });
     fail(error);
     return { id: id as string };

@@ -145,7 +145,7 @@ function ReceiptDialog({ replacing, onClose, onDone }: { replacing: Row | null; 
   const sel = (k: string, label: string, opts: { value: string; label: string }[]) => (
     <div className="grid gap-1.5">
       <Label>{label} <span className="text-primary">*</span></Label>
-      <Select value={v[k] || undefined} onValueChange={(val) => set(k, val)}>
+      <Select {...(v[k] ? { value: v[k] } : {})} onValueChange={(val) => set(k, val)}>
         <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
         <SelectContent>{opts.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
       </Select>
