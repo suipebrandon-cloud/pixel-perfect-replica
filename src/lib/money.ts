@@ -47,6 +47,9 @@ export const ACCOUNT_TYPES = [
   { value: "bank", label: "Bank" },
 ] as const;
 
-export function labelOf(list: readonly { value: string; label: string }[], v: string | null | undefined) {
+export function labelOf(
+  list: readonly { value: string; label: string }[],
+  v: string | null | undefined,
+) {
   return list.find((x) => x.value === v)?.label ?? v ?? "—";
 }

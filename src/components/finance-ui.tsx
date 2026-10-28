@@ -2,7 +2,15 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { formatFCFA } from "@/lib/money";
 
-export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: ReactNode }) {
+export function PageHeader({
+  title,
+  description,
+  actions,
+}: {
+  title: string;
+  description?: string;
+  actions?: ReactNode;
+}) {
   return (
     <div className="mb-6 flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
@@ -14,9 +22,19 @@ export function PageHeader({ title, description, actions }: { title: string; des
   );
 }
 
-export function Amount({ value, className, signed }: { value: number; className?: string; signed?: boolean }) {
+export function Amount({
+  value,
+  className,
+  signed,
+}: {
+  value: number;
+  className?: string;
+  signed?: boolean;
+}) {
   return (
-    <span className={cn("num", signed && value < 0 && "text-destructive", className)}>{formatFCFA(value)}</span>
+    <span className={cn("num", signed && value < 0 && "text-destructive", className)}>
+      {formatFCFA(value)}
+    </span>
   );
 }
 
@@ -33,16 +51,38 @@ const tones: Record<string, string> = {
 
 export function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={cn("inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide", tones[status] ?? tones["inactive"])}>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide",
+        tones[status] ?? tones["inactive"],
+      )}
+    >
       {status.replace("_", " ")}
     </span>
   );
 }
 
-export function StatCard({ label, value, hint, emphasis }: { label: string; value: ReactNode; hint?: string; emphasis?: boolean }) {
+export function StatCard({
+  label,
+  value,
+  hint,
+  emphasis,
+}: {
+  label: string;
+  value: ReactNode;
+  hint?: string;
+  emphasis?: boolean;
+}) {
   return (
-    <div className={cn("rounded-md border bg-card p-4", emphasis && "border-primary/40 border-l-4 border-l-primary")}>
-      <div className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">{label}</div>
+    <div
+      className={cn(
+        "rounded-md border bg-card p-4",
+        emphasis && "border-primary/40 border-l-4 border-l-primary",
+      )}
+    >
+      <div className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+        {label}
+      </div>
       <div className="mt-2 text-xl font-semibold">{value}</div>
       {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
     </div>
@@ -52,7 +92,9 @@ export function StatCard({ label, value, hint, emphasis }: { label: string; valu
 export function EmptyRow({ cols, text }: { cols: number; text: string }) {
   return (
     <tr>
-      <td colSpan={cols} className="py-10 text-center text-sm text-muted-foreground">{text}</td>
+      <td colSpan={cols} className="py-10 text-center text-sm text-muted-foreground">
+        {text}
+      </td>
     </tr>
   );
 }

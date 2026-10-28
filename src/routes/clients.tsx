@@ -3,17 +3,23 @@ import { PageHeader } from "@/components/finance-ui";
 import { RecordManager } from "@/components/record-manager";
 
 export const Route = createFileRoute("/clients")({
-  head: () => ({ meta: [
-    { title: "Clients · FirmAnt Finance" },
-    { name: "description", content: "FirmAnt client records with contact details and notes." },
-    { property: "og:title", content: "Clients · FirmAnt Finance" },
-    { property: "og:description", content: "FirmAnt client records." },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "Clients · FirmAnt Finance" },
+      { name: "description", content: "FirmAnt client records with contact details and notes." },
+      { property: "og:title", content: "Clients · FirmAnt Finance" },
+      { property: "og:description", content: "FirmAnt client records." },
+    ],
+  }),
   component: () => (
     <div>
-      <PageHeader title="Clients" description="Client contact details. Clients with projects or receipts can only be deactivated." />
+      <PageHeader
+        title="Clients"
+        description="Client contact details. Clients with projects or receipts can only be deactivated."
+      />
       <RecordManager
-        table="clients" singular="Client"
+        table="clients"
+        singular="Client"
         fields={[
           { name: "name", label: "Name", required: true },
           { name: "phone", label: "Phone" },
